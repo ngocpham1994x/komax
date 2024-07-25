@@ -75,9 +75,10 @@ namespace komax
             }
         }
         
-        private void ZetaToOmega(string path)
+        private string ZetaToOmega(string path)
         {
             string[] lines = File.ReadAllLines(path);
+            string everything = "";
 
             foreach (string line in lines)
             {
@@ -94,20 +95,23 @@ namespace komax
 
                     string output = 
                         $@"        [NewTubeMarkingEnd{tubeMarking}]
-                        TubeMarkingLayout={tubeMarkingLayout}
-                        TubeLength={tubeLength}
-                        TubeMarkingText1=""{tubeMarkingText1}""
-                        TubeMarkingText2=""{tubeMarkingText2}""
-                        TubeMarkingTextSize=1.5";
+            TubeMarkingLayout={tubeMarkingLayout}
+            TubeLength={tubeLength}
+            TubeMarkingText1=""{tubeMarkingText1}""
+            TubeMarkingText2=""{tubeMarkingText2}""
+            TubeMarkingTextSize=1.5";
 
-                    textBox3.AppendText(output + Environment.NewLine);
+                    everything += output + Environment.NewLine;
+                    //textBox3.AppendText(output + Environment.NewLine);
                 }
                 else
                 {
-                    textBox3.AppendText(line+ Environment.NewLine);
+                    everything += line + Environment.NewLine;
+                    //textBox3.AppendText(line + Environment.NewLine);
                 }
             }
 
+            return everything;
         }
 
         // Save As button
@@ -167,7 +171,16 @@ namespace komax
         // Convert button
         private void button5_Click(object sender, EventArgs e)
         {
-            ZetaToOmega(zetaDDS);
+            string output = ZetaToOmega(zetaDDS);
+            textBox3.Text = output;
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            textBox1.Clear();
+            textBox2.Clear();
+            textBox3.Clear();
+            textBox4.Clear();
         }
     }
 
