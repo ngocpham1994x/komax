@@ -7,8 +7,10 @@ using System.IO;
 using System.Linq;
 using System.Reflection.Emit;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Windows.Forms.LinkLabel;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace komax
@@ -16,6 +18,7 @@ namespace komax
     public partial class Form1 : Form
     {
         string zetaDDS = "";
+        int TUBELENGTH = 35;
 
 
         public Form1()
@@ -80,6 +83,7 @@ namespace komax
             string[] lines = File.ReadAllLines(path);
             string everything = "";
 
+
             foreach (string line in lines)
             {
                 if (line.Contains("TubeMarking="))
@@ -91,23 +95,34 @@ namespace komax
                     string tubeMarkingLayout = parts[1].Trim('"');
                     string tubeMarkingText1 = parts[2].Trim('"');
                     string tubeMarkingText2 = parts[4].Trim('"');
-                    string tubeLength = parts[6].Trim('"');
+                    //string tubeLength = parts[6].Trim('"');
 
-                    string output = 
+                    string output =
                         $@"        [NewTubeMarkingEnd{tubeMarking}]
             TubeMarkingLayout={tubeMarkingLayout}
-            TubeLength={tubeLength}
+            TubeLength={TUBELENGTH}
             TubeMarkingText1=""{tubeMarkingText1}""
             TubeMarkingText2=""{tubeMarkingText2}""
             TubeMarkingTextSize=1.5";
 
                     everything += output + Environment.NewLine;
-                    //textBox3.AppendText(output + Environment.NewLine);
+                }
+                else if (line.Contains("FontKey=") || line.Contains("BundlingSide=") || line.Contains("BundlingPostProcess="))
+                {
+                    continue;
+                }
+                else if (line.Contains("TerminalKey="))
+                {
+                    string output = Environment.NewLine +
+                         "\t\tFontKey=Default" + Environment.NewLine +
+                         "\t\tBundlingSide=1" + Environment.NewLine +
+                         "\t\tBundlingPostProcess=1";
+
+                    everything += line + output + Environment.NewLine;
                 }
                 else
                 {
                     everything += line + Environment.NewLine;
-                    //textBox3.AppendText(line + Environment.NewLine);
                 }
             }
 
@@ -122,7 +137,7 @@ namespace komax
             // If the user selects a file and clicks "OK"
             if (dialog.ShowDialog() == DialogResult.OK)
             {
-                textBox4.Text = dialog.SelectedPath;
+                textBox4.Text = dialog.SelectedPath + "\\Article.dds";
             }
         }
 
@@ -147,13 +162,13 @@ namespace komax
             }
 
             // Create the full file path for the exported file
-            string exportFilePath = Path.Combine(textBox4.Text, "Article.dds");
+            string exportFilePath = Path.Combine(textBox4.Text);
             SaveTextBoxContentToDDS(exportFilePath, textBox3.Text);
 
             MessageBox.Show($"Data Exported: \n {exportFilePath}", "Result", MessageBoxButtons.OK);
         }
 
-        public static void SaveTextBoxContentToDDS(string filePath, string content)
+        private void SaveTextBoxContentToDDS(string filePath, string content)
         {
             try
             {
@@ -182,9 +197,8 @@ namespace komax
             textBox3.Clear();
             textBox4.Clear();
         }
+
     }
 
-
 }
-
 
