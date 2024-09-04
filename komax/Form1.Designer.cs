@@ -129,7 +129,6 @@
             this.label1.Size = new System.Drawing.Size(157, 31);
             this.label1.TabIndex = 8;
             this.label1.Text = "Komax Tool";
-            this.label1.Click += new System.EventHandler(this.label1_Click);
             // 
             // button4
             // 
@@ -197,7 +196,7 @@
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage1.Size = new System.Drawing.Size(1013, 448);
             this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "Zeta to Omega";
+            this.tabPage1.Text = "ver20 to ver21";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
             // tabPage2
@@ -217,7 +216,7 @@
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage2.Size = new System.Drawing.Size(1013, 448);
             this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "Omega to Zeta";
+            this.tabPage2.Text = "ver21 to ver20";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
             // button7
@@ -228,6 +227,7 @@
             this.button7.TabIndex = 13;
             this.button7.Text = "Browse";
             this.button7.UseVisualStyleBackColor = true;
+            this.button7.Click += new System.EventHandler(this.button7_Click);
             // 
             // button8
             // 
@@ -237,6 +237,7 @@
             this.button8.TabIndex = 21;
             this.button8.Text = "CLEAR ALL";
             this.button8.UseVisualStyleBackColor = true;
+            this.button8.Click += new System.EventHandler(this.button8_Click);
             // 
             // label3
             // 
@@ -255,6 +256,7 @@
             this.button9.TabIndex = 20;
             this.button9.Text = "Convert";
             this.button9.UseVisualStyleBackColor = true;
+            this.button9.Click += new System.EventHandler(this.button9_Click);
             // 
             // textBox5
             // 
@@ -271,6 +273,7 @@
             this.button10.TabIndex = 19;
             this.button10.Text = "Export";
             this.button10.UseVisualStyleBackColor = true;
+            this.button10.Click += new System.EventHandler(this.button10_Click);
             // 
             // textBox6
             // 
@@ -296,6 +299,7 @@
             this.button11.TabIndex = 17;
             this.button11.Text = "Save As";
             this.button11.UseVisualStyleBackColor = true;
+            this.button11.Click += new System.EventHandler(this.button11_Click);
             // 
             // textBox8
             // 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection.Emit;
@@ -17,7 +18,7 @@ namespace komax
 {
     public partial class Form1 : Form
     {
-        string zetaDDS = "";
+        string zetaDDS = "", omegaDDS = "";
         int TUBELENGTH = 35;
 
 
@@ -78,7 +79,7 @@ namespace komax
             }
         }
         
-        private string ZetaToOmega(string path)
+        private string v20tov21(string path)
         {
             string[] lines = File.ReadAllLines(path);
             string everything = "";
@@ -124,6 +125,66 @@ namespace komax
                 {
                     everything += line + Environment.NewLine;
                 }
+            }
+
+            return everything;
+        }
+
+        private string v21tov20(string path)
+        {
+            string[] lines = File.ReadAllLines(path);
+            string everything = "";
+
+            string tubeMarking = "";
+            string tubeMarkingText1 = "";
+            string tubeMarkingText2 = "";
+            string default_text = Environment.NewLine +
+                         "\t\tFontKey=Default" + Environment.NewLine +
+                         "\t\tBundlingSide=1" + Environment.NewLine +
+                         "\t\tBundlingPostProcess=1";
+
+            foreach (string line in lines)
+            {
+                string output = "";
+
+                if (line.Contains("FontKey=") || line.Contains("BundlingSide=") || line.Contains("BundlingPostProcess=") ||
+                    line.Contains("TubeMarkingLayout") || line.Contains("TubeLength"))
+                {
+                    continue;
+                }
+
+                else if (line.Contains("NewTubeMarkingEnd"))
+                {
+                    //tubeMarking = string.Join("",(from c in line
+                    //               where c >= '0' && c <= '9'
+                    //               select c).ToList());
+                    tubeMarking = line[line.Length-2].ToString();
+                }
+
+                else if (line.Contains("TubeMarkingText1="))
+                {
+                    tubeMarkingText1 = "\"" + line.Split('\"')[1] + "\"";
+                }
+
+                else if (line.Contains("TubeMarkingText2="))
+                {
+                    tubeMarkingText2 = "\"" + line.Split('\"')[1] + "\"";
+                }
+
+                else if (line.Contains("TubeMarkingTextSize="))
+                {
+                    output = $"\t\tTubeMarking={tubeMarking},\"*\",{tubeMarkingText1},,{tubeMarkingText2},,38";
+                    everything += output + Environment.NewLine;
+
+                }
+
+                else if (line.Contains("NewMarkingTextWire1-2"))
+                {
+                    everything += default_text + line;
+                }
+
+                else
+                    everything += line + output + Environment.NewLine;
             }
 
             return everything;
@@ -175,7 +236,7 @@ namespace komax
                 // Save the content to a DDS file (plain text with .dds extension)
                 File.WriteAllText(filePath, content);
 
-                MessageBox.Show("Content saved successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                //MessageBox.Show("Content saved successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch (Exception ex)
             {
@@ -186,10 +247,11 @@ namespace komax
         // Convert button
         private void button5_Click(object sender, EventArgs e)
         {
-            string output = ZetaToOmega(zetaDDS);
+            string output = v20tov21(zetaDDS);
             textBox3.Text = output;
         }
 
+        // CLEAR ALL button
         private void button6_Click(object sender, EventArgs e)
         {
             textBox1.Clear();
@@ -198,10 +260,68 @@ namespace komax
             textBox4.Clear();
         }
 
-        private void label1_Click(object sender, EventArgs e)
+        // Browse button
+        private void button7_Click(object sender, EventArgs e)
         {
+            OpenFileDialog dialog = new OpenFileDialog();
+            dialog.Filter = "DDS Files (*.dds) | *.dds| All Files (*.*)| *.*";
 
+            // If the user selects a file and clicks "OK"
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                omegaDDS = dialog.FileName;
+                textBox5.Text = dialog.FileName;
+
+                string fileContent = ReadFile(omegaDDS);
+                textBox6.Text = fileContent;
+            }
         }
+
+        // Save As button
+        private void button10_Click(object sender, EventArgs e)
+        {
+            // First check that the user chose a file path
+            if (string.IsNullOrEmpty(textBox7.Text))
+            {
+                MessageBox.Show($"User did not choose a valid file path. Did not export to file.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            // Create the full file path for the exported file
+            string exportFilePath = Path.Combine(textBox7.Text);
+            SaveTextBoxContentToDDS(exportFilePath, textBox8.Text);
+
+            MessageBox.Show($"Data Exported: \n {exportFilePath}", "Result", MessageBoxButtons.OK);
+        }
+
+        // CLEAR ALL button
+        private void button8_Click(object sender, EventArgs e)
+        {
+            textBox5.Clear();
+            textBox6.Clear();
+            textBox7.Clear();
+            textBox8.Clear();
+        }
+
+        private void button9_Click(object sender, EventArgs e)
+        {
+            string output = v21tov20(omegaDDS);
+            textBox8.Text = output;
+        }
+
+        // Export button
+        private void button11_Click(object sender, EventArgs e)
+        {
+            FolderBrowserDialog dialog = new FolderBrowserDialog();
+
+            // If the user selects a file and clicks "OK"
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                textBox7.Text = dialog.SelectedPath + "\\Article.dds";
+            }
+        }
+
+
     }
 
 }
