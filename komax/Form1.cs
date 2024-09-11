@@ -155,9 +155,6 @@ namespace komax
 
                 else if (line.Contains("NewTubeMarkingEnd"))
                 {
-                    //tubeMarking = string.Join("",(from c in line
-                    //               where c >= '0' && c <= '9'
-                    //               select c).ToList());
                     tubeMarking = line[line.Length-2].ToString();
                 }
 
